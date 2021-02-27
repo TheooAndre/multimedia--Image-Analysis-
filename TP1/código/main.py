@@ -109,7 +109,7 @@ def ex4():
 	#img = plt.imread('../imagens/peppers.bmp')
 	print("Dimensões originais:", img.shape)
 	
-	ds = '4:2:2'
+	ds = '4:2:0'
 	
 	Y, Cb, Cr = RGB2YCbCr(R, G, B);
 	
