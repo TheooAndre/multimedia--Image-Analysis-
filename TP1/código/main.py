@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.colors as clr
 import numpy as np
-from scipy.fftpack import dct
+from scipy.fftpack import dct, idct
 import itertools
 import math
 
@@ -126,6 +126,8 @@ def ex4():
 		
 	plt.show()
 	
+	return Y, Cb_d, Cr_d
+	
 def downsample(C1, C2, C3, d):
     height, width = C1.shape
     if d == '4:2:0':
@@ -153,6 +155,29 @@ def upsample(C1, C2, C3, d, filt=True):
     
     return C1, C2_us, C3_us    
 
+def ex5_1():
+	Y, Cb_d, Cr_d = ex4()
+	
+	Y_dct = dct_2(Y)
+	Cb_dct = dct_2(Cb_d)
+	Cr_dct = dct_2(Cr_d)
+	
+	view_dct(Y_dct)
+	view_dct(Cb_dct)
+	view_dct(Cr_dct)
+	
+	Y_idct = idct_2(Y_dct)
+	Cb_idct = idct_2(Cb_dct)
+	Cr_idct = idct_2(Cr_dct)
+	
+	colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
+	view(colors_grayscale, 'grayscale', Y_idct)
+	view(colors_grayscale, 'grayscale', Cb_idct)
+	view(colors_grayscale, 'grayscale', Cr_idct)
+	
+	plt.show()
+	
+
 def dct_8x8(canal):
     height, width = canal.shape
    
@@ -179,7 +204,13 @@ def dct_64x64(canal):
 def dct_2(canal):
     X_dct = dct(canal, norm='ortho').T
     dct_blocks = dct(X_dct,norm='ortho').T     
+
     return dct_blocks
+   
+def idct_2(canal):
+	X_idct = idct(canal, norm='ortho').T
+	idct_blocks = idct(X_idct, norm='ortho').T
+	return idct_blocks
         
 def encoder(image, dsType='4:2:2', filt=False, BlockSize=8):
     R = image[:, :, 0]
@@ -216,6 +247,6 @@ def decoder(Y, Cb_ds, Cr_ds, dsType='4:2:2', filt=True, BlockSize=8):
 if __name__ == "__main__":
     #ex2()
     #ex3()
-    ex4()
-
+    #ex4()
+	ex5_1()
     
