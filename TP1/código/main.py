@@ -108,6 +108,15 @@ def RGB2YCbCr(R, G, B):
     
     return Y, Cb, Cr
 
+def ex4():
+	img, R, G, B = open_image('../imagens/peppers.bmp')
+	
+	ds = '4:2:2'
+	f = false
+	bs = 8
+	
+	Y, Cb_ds, Cr_ds = encoder(img, ds, f, bs)
+	
 def downsample(C1, C2, C3, d):
     height, width = C1.shape
     if d == '4:2:0':
@@ -120,11 +129,20 @@ def downsample(C1, C2, C3, d):
         pass
 
     return C1, C2, C3
-if __name__ == "__main__":
-    colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
-    [img, R, G, B] = open_image('../imagens/peppers.bmp')
-    #ex2()
-    [Y, Cb, Cr] = RGB2YCbCr(R, G, B)
-    [Y_d,Cb_d,Cr_d] =  downsample(Y,Cb, Cr, "4:2:0")
     
-    view(colors_grayscale,"gray",  )
+def encoder(image, dsType='4:2:2', filt=false, BlockSize=8):
+	R = image[:, :, 0]
+	G = image[:, :, 1]
+	B = image[:, :, 2]
+	
+	Y, Cb, Cr = RGB2YCbCr(R, G, B)
+	
+	Y, Cb_ds, Cr_ds = downsample(Y, Cb, Cr, dsType)
+	
+	return Y, Cb_ds, Cr_ds
+	
+if __name__ == "__main__":
+	#ex2()
+	#ex3()
+	ex4()
+
