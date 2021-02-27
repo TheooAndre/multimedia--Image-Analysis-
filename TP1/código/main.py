@@ -157,17 +157,28 @@ def dct_8x8(canal):
     height, width = canal.shape
    
     
-    img_blocks = [canal[j:j + 8, i:i + 8]
-        for (j, i) in itertools.product(range(0, height, 8),range(0, width, 8))]
-    X_dct = dct(img_blocks, norm='ortho')
+    img_blocks = [canal[j:j + 8, i:i + 8] for (j, i) in itertools.product(range(0, height, 8),range(0, width, 8))]
+    X_dct = dct(img_blocks, norm='ortho').T
     # DCT transform every 8x8 block
-    dct_blocks = [dct(X_dct,norm='ortho') for X_dct in img_blocks]
+    dct_blocks = [dct(X_dct,norm='ortho').T for i in img_blocks]
 
     return dct_blocks
+   
+def dct_64x64(canal):
+    height, width = canal.shape
+   
     
+    img_blocks = [canal[j:j + 64, i:i + 64]
+        for (j, i) in itertools.product(range(0, height, 64),range(0, width, 64))]
+    X_dct = dct(img_blocks, norm='ortho').T
+    # DCT transform every 8x8 block
+    dct_blocks = [dct(X_dct,norm='ortho').T for i in img_blocks]
+
+    return dct_blocks
+   
 def dct_2(canal):
-    X_dct = dct(canal, norm='ortho')
-    dct_blocks = dct(X_dct,norm='ortho')     
+    X_dct = dct(canal, norm='ortho').T
+    dct_blocks = dct(X_dct,norm='ortho').T     
     return dct_blocks
         
 def encoder(image, dsType='4:2:2', filt=False, BlockSize=8):
