@@ -54,7 +54,7 @@ def ex3():
 
     R2, G2, B2 = YCbCr2RGB(Y, Cb, Cr);
    #testar a conversao se deu os valores originais
-   # print(R2 == R)
+    print(R2 == R)
     view(colors_red, 'red', R2)
     view(colors_green, 'green', G2)
     view(colors_blue, 'blue', B2)
@@ -66,9 +66,9 @@ def YCbCr2RGB(Y, Cb, Cr):
     #G = Y - 0.344136*(Cb - 128) - 0.714136*(Cr - 128)
     #B = Y + 1.772*(Cb - 128)
     height, width = Y.shape
-    R = np.empty((height, width), dtype = np.int8)
-    G = np.empty((height, width), dtype = np.int8)
-    B = np.empty((height, width), dtype = np.int8)
+    R = np.empty((height, width), dtype = np.uint8)
+    G = np.empty((height, width), dtype = np.uint8)
+    B = np.empty((height, width), dtype = np.uint8)
 
     R = Y + 1.402*(Cr - 128)
     G = Y - 0.344136*(Cb - 128) - 0.714136*(Cr - 128)
@@ -94,14 +94,10 @@ def RGB2YCbCr(R, G, B):
     #Cb = (B-Y)/1.772 + 128
     #Cr = (R-Y)/1.402 + 128
     height, width = R.shape
-    Y = np.empty((height, width), dtype = np.int8)
-    Cb = np.empty((height, width), dtype = np.int8)
-    Cr = np.empty((height, width), dtype = np.int8)
-    '''
-    Y = 0.299*R + 0.587*G + 0.114*B
-    Cb = -0.168736*R - 0.331264*G + 0.5*B + 256
-    Cr = 0.5*R - 0.418688*G - 0.081312*B + 256
-    '''
+    Y = np.empty((height, width), dtype = np.uint8)
+    Cb = np.empty((height, width), dtype = np.uint8)
+    Cr = np.empty((height, width), dtype = np.uint8)
+
     Y = 0.299*R + 0.587*G + 0.114*B
     Cb = (B - Y)/1.772 + 128
     Cr = (R - Y)/1.402 + 128
@@ -110,12 +106,25 @@ def RGB2YCbCr(R, G, B):
 
 def ex4():
 	img, R, G, B = open_image('../imagens/peppers.bmp')
+	#img = plt.imread('../imagens/peppers.bmp')
+	print("Dimensões originais:", img.shape)
 	
 	ds = '4:2:2'
-	f = false
-	bs = 8
 	
-	Y, Cb_ds, Cr_ds = encoder(img, ds, f, bs)
+	Y, Cb, Cr = RGB2YCbCr(R, G, B);
+	
+	Y, Cb_d, Cr_d = downsample(Y, Cb, Cr, ds)
+	
+	print("Dimensões Y:", Y.shape)
+	print("Dimensões Cb_d:", Cb_d.shape)
+	print("Dimensões Cr_d:", Cr_d.shape)
+	
+	colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
+	view(colors_grayscale, 'grayscale', Y)
+	view(colors_grayscale, 'grayscale', Cb_d)
+	view(colors_grayscale, 'grayscale', Cr_d)
+		
+	plt.show()
 	
 def downsample(C1, C2, C3, d):
     height, width = C1.shape
@@ -129,8 +138,22 @@ def downsample(C1, C2, C3, d):
         pass
 
     return C1, C2, C3
-    
-def encoder(image, dsType='4:2:2', filt=false, BlockSize=8):
+   
+def upsample(C1, C2, C3, d, filt=True):
+	if d == '4:2:0':
+		C2_us = np.repeat(C2, 2, axis=1)
+		C2_us = np.repeat(C2_us, 2, axis=0)
+		C3_us = np.repeat(C3, 2, axis=1)
+		C3_us = np.repeat(C3_us, 2, axis=0)
+	elif d == '4:2:2':
+		C2_us = np.repeat(C2, 2, axis=1)
+		C3_us = np.repeat(C3, 2, axis=1)
+	elif d == '4:4:4':
+		pass
+	
+	return C1, C2_us, C3_us	
+    	
+def encoder(image, dsType='4:2:2', filt=False, BlockSize=8):
 	R = image[:, :, 0]
 	G = image[:, :, 1]
 	B = image[:, :, 2]
@@ -140,6 +163,13 @@ def encoder(image, dsType='4:2:2', filt=false, BlockSize=8):
 	Y, Cb_ds, Cr_ds = downsample(Y, Cb, Cr, dsType)
 	
 	return Y, Cb_ds, Cr_ds
+	
+def decoder(Y, Cb_ds, Cr_ds, dsType='4:2:2', filt=True, BlockSize=8):
+	Y, Cb, Cr = upsample(Y, Cb_ds, Cr_ds, dsType)
+	
+	R, G, B = YCbCr2RGB(Y, Cb, Cr)
+	
+	return R, G, B
 	
 if __name__ == "__main__":
 	#ex2()
