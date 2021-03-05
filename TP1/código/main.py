@@ -78,10 +78,6 @@ def YCbCr2RGB(Y, Cb, Cr):
     G = Y - 0.344136*(Cb - 128) - 0.714136*(Cr - 128)
     B = Y + 1.771*(Cb - 128)
     
-    R= np.round(R).astype(np.uint8)
-    G= np.round(G).astype(np.uint8)
-    B= np.round(B).astype(np.uint8)
-    
     R[R>255]=255
     R[R<0]=0
     
@@ -90,6 +86,10 @@ def YCbCr2RGB(Y, Cb, Cr):
     
     B[B>255]=255
     B[B<0]=0
+    
+    R= np.round(R).astype(np.uint8)
+    G= np.round(G).astype(np.uint8)
+    B= np.round(B).astype(np.uint8)
 
     return R, G, B
 
@@ -109,6 +109,10 @@ def ex4():
 	img, R, G, B = open_image('../imagens/peppers.bmp')
 	print("Dimensões originais:", img.shape)
 	
+	plt.figure()
+	plt.imshow(img)
+	
+	
 	ds = '4:2:0'
 	
 	Y, Cb, Cr = RGB2YCbCr(R, G, B)
@@ -119,10 +123,21 @@ def ex4():
 	print("Dimensões Cb_d:", Cb_d.shape)
 	print("Dimensões Cr_d:", Cr_d.shape)
 	
-	colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
-	view(colors_grayscale, 'grayscale', Y)
-	view(colors_grayscale, 'grayscale', Cb_d)
-	view(colors_grayscale, 'grayscale', Cr_d)
+	#colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
+	#view(colors_grayscale, 'grayscale', Y)
+	#view(colors_grayscale, 'grayscale', Cb_d)
+	#view(colors_grayscale, 'grayscale', Cr_d)
+	
+	Y_r, Cb_r, Cd_r = upsample(Y, Cb_d, Cr_d, ds)
+	R_r, G_r, B_r = YCbCr2RGB(Y_r, Cb_r, Cd_r)
+	
+	img_r = img.copy()
+	img_r[:,:,0] = R_r
+	img_r[:,:,1] = G_r
+	img_r[:,:,2] = B_r
+	
+	plt.figure()
+	plt.imshow(img_r, None)
 		
 	plt.show()
 	
@@ -177,7 +192,21 @@ def ex5_1():
 	
 	plt.show()
 	
+def dct_blocks(canal, BlockSize=8):
+	height, width = canal.shape
+	column_padding_amount = (BlockSize - width % BlockSize) % BlockSize
+	line_padding_amount = (BlockSize - height % BlockSize) % BlockSize
+	
+	column_padding = canal[:, width - 1].reshape(height, 1)	# extrair a última coluna
+	column_padding = np.repeat(column_padding, column_padding_amount, axis=1)	# repetir 
+	canal = np.concatenate((canal, column_padding), axis=1)	# concatenar
 
+	line_padding = canal[height - 1, :].reshape(1, width + column_padding_amount)	# extrair última linha
+	line_padding = np.repeat(line_padding, line_padding_amount, axis=0)	# repetir
+	canal = np.concatenate((canal, line_padding), axis=0)	# concatenar
+	
+	return canal
+	
 def dct_8x8(canal):
     height, width = canal.shape
    
@@ -192,7 +221,6 @@ def dct_8x8(canal):
 def dct_64x64(canal):
     height, width = canal.shape
    
-    
     img_blocks = [canal[j:j + 64, i:i + 64]
         for (j, i) in itertools.product(range(0, height, 64),range(0, width, 64))]
     X_dct = dct(img_blocks, norm='ortho').T
@@ -221,8 +249,6 @@ def encoder(image, dsType='4:2:2', filt=False, BlockSize=8):
     
     Y, Cb_ds, Cr_ds = downsample(Y, Cb, Cr, dsType)
     
-    
-
     return Y, Cb_ds, Cr_ds
     
 def decoder(Y, Cb_ds, Cr_ds, dsType='4:2:2', filt=True, BlockSize=8):
