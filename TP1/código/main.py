@@ -205,8 +205,65 @@ def dct_blocks(canal, BlockSize=8):
 	line_padding = np.repeat(line_padding, line_padding_amount, axis=0)	# repetir
 	canal = np.concatenate((canal, line_padding), axis=0)	# concatenar
 	
+	height, width = canal.shape
+	n_blocks_height = int(height/BlockSize)
+	n_blocks_width = int(width/BlockSize)
+	
+	for i in range(n_blocks_height):
+		for j in range(n_blocks_width):
+			canal[i*BlockSize:i*BlockSize + BlockSize, j*BlockSize:j*BlockSize + BlockSize] = \
+				dct_2(canal[i*BlockSize:i*BlockSize + BlockSize, j*BlockSize:j*BlockSize + BlockSize])
+	
 	return canal
 	
+def idct_blocks(canal, original_height, original_width, BlockSize=8):
+	height, width = canal.shape	
+	n_blocks_height = int(height/BlockSize)
+	n_blocks_width = int(width/BlockSize)
+	
+	for i in range(n_blocks_height):
+		for j in range(n_blocks_width):
+			canal[i*BlockSize:i*BlockSize + BlockSize, j*BlockSize:j*BlockSize + BlockSize] = \
+				idct_2(canal[i*BlockSize:i*BlockSize + BlockSize, j*BlockSize:j*BlockSize + BlockSize])
+	
+	canal = canal[0:original_height, 0:original_width]
+	
+	return canal
+	
+def ex5_23(bs=8):
+	img, R, G, B = open_image('../imagens/peppers.bmp')
+	colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
+	
+	ds = '4:2:0'
+	filt = False
+	
+	Y, Cb, Cr = RGB2YCbCr(R, G, B)
+	
+	Y, Cb_ds, Cr_ds = downsample(Y, Cb, Cr, ds)
+	
+	Y_dct = dct_blocks(Y, bs)
+	Cb_dct = dct_blocks(Cb_ds, bs)
+	Cr_dct = dct_blocks(Cr_ds, bs)
+	
+	view_dct(Y_dct)
+	view_dct(Cb_dct)
+	view_dct(Cr_dct)
+	
+	height, width = R.shape
+	
+	Y_r = idct_blocks(Y_dct, height, width, bs)
+	Cb_ds_r = idct_blocks(Cb_dct, int(height/2), int(width/2), bs)
+	Cr_ds_r = idct_blocks(Cr_dct, int(height/2), int(width/2), bs)
+	
+	view(colors_grayscale, 'grayscale', Y)
+	view(colors_grayscale, 'grayscale', Cb_ds)
+	view(colors_grayscale, 'grayscale', Cr_ds)
+	
+	print("Y:", Y)
+	print("Y_r", Y_r)
+	
+	plt.show()
+'''	
 def dct_8x8(canal):
     height, width = canal.shape
    
@@ -228,7 +285,7 @@ def dct_64x64(canal):
     dct_blocks = [dct(X_dct,norm='ortho').T for i in img_blocks]
 
     return dct_blocks
-   
+''' 
 def dct_2(canal):
     X_dct = dct(canal, norm='ortho').T
     dct_blocks = dct(X_dct,norm='ortho').T     
@@ -249,30 +306,68 @@ def encoder(image, dsType='4:2:2', filt=False, BlockSize=8):
     
     Y, Cb_ds, Cr_ds = downsample(Y, Cb, Cr, dsType)
     
-    return Y, Cb_ds, Cr_ds
+    Y_dct = dct_blocks(Y, BlockSize)
+    Cb_dct = dct_blocks(Cb_ds, BlockSize)
+    Cr_dct = dct_blocks(Cr_ds, BlockSize)
     
-def decoder(Y, Cb_ds, Cr_ds, dsType='4:2:2', filt=True, BlockSize=8):
-    Y, Cb, Cr = upsample(Y, Cb_ds, Cr_ds, dsType)
+    return Y_dct, Cb_dct, Cr_dct
     
-    R, G, B = YCbCr2RGB(Y, Cb, Cr)
+def decoder(Y_dct, Cb_dct, Cr_dct, original_height, original_width, dsType='4:2:2', filt=True, BlockSize=8):
+	if(dsType == '4:2:2'):
+		Cb_ds_height = original_height
+		Cr_ds_height = original_height
+		Cb_ds_widht = int(original_width/2)
+		Cr_ds_widht = int(original_width/2)
+	elif(dsType == '4:2:0'):
+		Cb_ds_height = int(original_height/2)
+		Cr_ds_height = int(original_height/2)
+		Cb_ds_widht = int(original_width/2)
+		Cr_ds_widht = int(original_width/2)
+	elif(dsType == '4:4:4'):
+		Cb_ds_height = original_height
+		Cr_ds_height = original_height
+		Cb_ds_widht = original_width
+		Cr_ds_widht = original_width
+	
+	Y = idct_blocks(Y_dct, original_height, original_width, BlockSize)
+	Cb_ds = idct_blocks(Cb_dct, Cb_ds_height, original_width, BlockSize)
+	Cr_ds = idct_blocks(Cr_dct, Cr_ds_height, original_width, BlockSize)
+	
+	Y, Cb, Cr = upsample(Y, Cb_ds, Cr_ds, dsType)
     
+	R, G, B = YCbCr2RGB(Y, Cb, Cr)
     
-
-    return R, G, B
-
-    '''
-    Y_dct  = dct_2(Y)
-    Cb_dct = dct_2(Cb_d)
-    Cr_dct = dct_2(Cr_d)
-    
-    view_dct(Y_dct)
-    view_dct(Cb_dct)
-    view_dct(Cr_dct) 
-    '''
+	return R, G, B
     
 if __name__ == "__main__":
     #ex2()
     #ex3()
     #ex4()
-	ex5_1()
-    
+	#ex5_1()
+	#ex5_23(8)
+	ex5_23(64)
+	'''
+	ds = '4:2:0'
+	f = False
+	bs = 8
+	
+	img = plt.imread('../imagens/peppers.bmp')
+	
+	plt.figure()
+	plt.imshow(img)
+	
+	height,width = img[:,:,0].shape
+	
+	Y_dct, Cb_dct, Cr_dct = encoder(img, ds, f, bs)
+	R_r, G_r, B_r = decoder(Y_dct, Cb_dct, Cr_dct, height, width, ds, f, bs)
+	
+	img_r = img.copy()
+	img_r[:,:,0] = R_r
+	img_r[:,:,1] = G_r
+	img_r[:,:,2] = B_r
+	
+	plt.figure()
+	plt.imshow(img_r, None)
+	
+	plt.show()
+	'''
