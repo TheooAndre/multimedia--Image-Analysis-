@@ -157,18 +157,19 @@ def downsample(C1, C2, C3, d):
     return C1, C2, C3
     
 def upsample(C1, C2, C3, d, filt=True):
-    if d == '4:2:0':
-        C2_us = np.repeat(C2, 2, axis=1)
-        C2_us = np.repeat(C2_us, 2, axis=0)
-        C3_us = np.repeat(C3, 2, axis=1)
-        C3_us = np.repeat(C3_us, 2, axis=0)
-    elif d == '4:2:2':
-        C2_us = np.repeat(C2, 2, axis=1)
-        C3_us = np.repeat(C3, 2, axis=1)
-    elif d == '4:4:4':
-        pass
+	height, width = C1.shape
+	if d == '4:2:0':
+		C2_us = np.repeat(C2, 2, axis=1)
+		C2_us = np.repeat(C2_us, 2, axis=0)
+		C3_us = np.repeat(C3, 2, axis=1)
+		C3_us = np.repeat(C3_us, 2, axis=0)
+	elif d == '4:2:2':
+		C2_us = np.repeat(C2, 2, axis=1)
+		C3_us = np.repeat(C3, 2, axis=1)
+	elif d == '4:4:4':
+		pass
     
-    return C1, C2_us, C3_us    
+	return C1, C2_us[0:height, 0:width], C3_us[0:height, 0:width]    
 
 def ex5_1():
 	Y, Cb_d, Cr_d = ex4()
