@@ -282,7 +282,7 @@ if __name__ == "__main__":
 	f = False
 	bs = 8
 
-	img = plt.imread('../imagens/peppers.bmp')
+	img = plt.imread('../imagens/logo.bmp')
 
 	height,width = img[:,:,0].shape
 	# encoder(image, q_factor=75, dsType='4:2:2', filt=False, BlockSize=8)        

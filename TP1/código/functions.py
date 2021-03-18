@@ -28,13 +28,13 @@ def decoder(Y_dpcm, Cb_dpcm, Cr_dpcm, q_cbcr, q_y, original_height, original_wid
     if(dsType == '4:2:2'):
         Cb_ds_height = original_height
         Cr_ds_height = original_height
-        Cb_ds_width = int(original_width/2)
-        Cr_ds_width = int(original_width/2)
+        Cb_ds_width = int(original_width/2) + (original_width % 2)
+        Cr_ds_width = int(original_width/2) + (original_width % 2)
     elif(dsType == '4:2:0'):
-        Cb_ds_height = int(original_height/2)
-        Cr_ds_height = int(original_height/2)
-        Cb_ds_width = int(original_width/2)
-        Cr_ds_width = int(original_width/2)
+        Cb_ds_height = int(original_height/2) + (original_height % 2)
+        Cr_ds_height = int(original_height/2) + (original_height % 2)
+        Cb_ds_width = int(original_width/2) + (original_width % 2)
+        Cr_ds_width = int(original_width/2) + (original_width % 2)
     elif(dsType == '4:4:4'):
         Cb_ds_height = original_height
         Cr_ds_height = original_height
