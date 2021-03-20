@@ -8,19 +8,6 @@ def open_image(path):
     B = img[:, :, 2]
 
     return img, R, G, B
-    
-def view(colors, name, image):
-    colormap = clr.LinearSegmentedColormap.from_list(name, colors, N=256)
-    plt.figure()
-    plt.axis('off')
-    plt.imshow(image, cmap = colormap)
-
-
-def view_dct(image):
-    colors= [(0,0,0), (0.5,0.5,0.5)]
-    colormap = clr.LinearSegmentedColormap.from_list("dct YCBCR", colors, N=256)
-    plt.figure()
-    plt.imshow(np.log(abs(image) + 0.0001), cmap = colormap)
 
 def ex2():
     img, R, G, B = open_image('../imagens/peppers.bmp')

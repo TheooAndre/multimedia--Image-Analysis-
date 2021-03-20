@@ -56,6 +56,32 @@ def decoder(Y_dpcm, Cb_dpcm, Cr_dpcm, q_cbcr, q_y, original_height, original_wid
 
     return R, G, B
     
+def view(colors, name, image):
+    colormap = clr.LinearSegmentedColormap.from_list(name, colors, N=256)
+    plt.figure()
+    plt.axis('off')
+    plt.imshow(image, cmap = colormap)
+
+def view_dct(image):
+    colors= [(0,0,0), (0.5,0.5,0.5)]
+    colormap = clr.LinearSegmentedColormap.from_list("dct YCBCR", colors, N=256)
+    plt.figure()
+    plt.imshow(np.log(abs(image) + 0.0001), cmap = colormap)
+    
+def view2(colors, name, image, title):
+    colormap = clr.LinearSegmentedColormap.from_list(name, colors, N=256)
+    plt.figure()
+    plt.title(title)
+    #plt.axis('off')
+    plt.imshow(image, cmap = colormap)
+    
+def view_dct2(image, title):
+    colors= [(0,0,0), (1, 1, 1)]
+    colormap = clr.LinearSegmentedColormap.from_list("dct YCBCR", colors, N=256)
+    plt.figure()
+    plt.title(title)
+    plt.imshow(np.log(abs(image) + 0.0001), cmap = colormap)
+    
 ### conversão de espaços de cor ###
 def YCbCr2RGB(Y, Cb, Cr):
     height, width = Y.shape
