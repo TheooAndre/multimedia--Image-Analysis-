@@ -236,7 +236,7 @@ def ex7():
     Cb_dct = dct_blocks(Cb_ds, bs)
     Cr_dct = dct_blocks(Cr_ds, bs)
     
-    Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y = quantization(Y_dct, Cb_dct, Cr_dct, 100)
+    Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y = quantization(Y_dct, Cb_dct, Cr_dct, 75)
     
     Y_dpcm, Cb_dpcm, Cr_dpcm = dpcm(Y_quant, Cb_quant, Cr_quant)
     
@@ -246,8 +246,9 @@ def ex7():
 
     view_dct(Y_quant[8:24, 8:24])
     view_dct(Y_dpcm[8:24, 8:24])
-    print("Y_dct", Y_quant[8:16, 8:16])
-    print("Y_dpcm", Y_dpcm[8:16, 8:16])
+    print("Y_quant\n", Y_quant[8:16, 8:16])
+    print("Y_dpcm\n", Y_dpcm[8:16, 8:16])
+    print(Y_quant[0:16, 0:16]==Y_dpcm[0:16, 0:16])
     
     Y_r = idct_blocks(Y_dct_r, height, width)
     Cb_ds_r = idct_blocks(Cb_dct_r, height, width)
@@ -318,6 +319,7 @@ if __name__ == "__main__":
     #ex6()
     #ex7()
     #ex8()
+
     ds = '4:2:0'
     q_factor = 75
     f = False

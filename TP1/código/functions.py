@@ -257,22 +257,22 @@ def dpcm(Y_quant, Cb_quant, Cr_quant):
 	Cb_dpcm = np.copy(Cb_quant)
 	Cr_dpcm = np.copy(Cr_quant)
 
-	for i in range(8, width_y, 8):
-		Y_dpcm[0, i] = Y_quant[0, i] - Y_quant[0, i - 8]
-		if(i < width_c):
-			Cb_dpcm[0, i] = Cb_quant[0, i] - Cb_quant[0, i - 8]
-			Cr_dpcm[0, i] = Cr_quant[0, i] - Cr_quant[0, i - 8]
-		
+	for j in range(8, width_y, 8):
+		Y_dpcm[0, j] = Y_quant[0, j] - Y_quant[0, j - 8]
+		if(j < width_c):
+			Cb_dpcm[0, j] = Cb_quant[0, j] - Cb_quant[0, j - 8]
+			Cr_dpcm[0, j] = Cr_quant[0, j] - Cr_quant[0, j - 8]
+	
 	for i in range(8, height_y, 8):
 		Y_dpcm[i, 0] = Y_quant[i, 0] - Y_quant[i - 8, width_y - 8]
 		if(i < height_c):
 			Cb_dpcm[i, 0] = Cb_quant[i, 0] - Cb_quant[i - 8, width_c - 8]
 			Cr_dpcm[i, 0] = Cr_quant[i, 0] - Cr_quant[i - 8, width_c - 8]
 		for j in range(8, width_y, 8):
-		    Y_dpcm[i, j] = Y_quant[i, j] - Y_quant[i, j - 8]
-		    if(i < height_c and j < width_c):
-		        Cb_dpcm[i, j] = Cb_quant[i, j] - Cb_quant[i, j - 8]
-		        Cr_dpcm[i, j] = Cr_quant[i, j] - Cr_quant[i, j - 8]
+			Y_dpcm[i, j] = Y_quant[i, j] - Y_quant[i, j - 8]
+			if(i < height_c and j < width_c):
+				Cb_dpcm[i, j] = Cb_quant[i, j] - Cb_quant[i, j - 8]
+				Cr_dpcm[i, j] = Cr_quant[i, j] - Cr_quant[i, j - 8]		
 
 	return Y_dpcm, Cb_dpcm, Cr_dpcm
 
@@ -284,22 +284,22 @@ def idpcm(Y_dpcm, Cb_dpcm, Cr_dpcm):
     Cb_quant = np.copy(Cb_dpcm)
     Cr_quant = np.copy(Cr_dpcm)
     
-    for i in range(8, width_y, 8):
-    	Y_quant[0, i] = Y_dpcm[0, i] + Y_quant[0, i - 8]
-    	if(i < width_c):
-    		Cb_quant[0, i] = Cb_dpcm[0, i] + Cb_quant[0, i - 8]
-    		Cr_quant[0, i] = Cr_dpcm[0, i] + Cr_quant[0, i - 8]
-                
+    for j in range(8, width_y, 8):
+    	Y_quant[0, j] = Y_dpcm[0, j] + Y_quant[0, j - 8]
+    	if(j < width_c):
+    		Cb_quant[0, j] = Cb_dpcm[0, j] + Cb_quant[0, j - 8]
+    		Cr_quant[0, j] = Cr_dpcm[0, j] + Cr_quant[0, j - 8]
+    
     for i in range(8, height_y, 8):
     	Y_quant[i, 0] = Y_dpcm[i, 0] + Y_quant[i - 8, width_y - 8]
     	if(i < height_c):
     		Cb_quant[i, 0] = Cb_dpcm[i, 0] + Cb_quant[i - 8, width_c - 8]
     		Cr_quant[i, 0] = Cr_dpcm[i, 0] + Cr_quant[i - 8, width_c - 8]
     	for j in range(8, width_y, 8):
-            Y_quant[i, j] = Y_dpcm[i, j] + Y_quant[i - 8, (j - 8)]
-            if(i < height_c and j < width_c):
-                Cb_quant[i, j] = Cb_dpcm[i, j] + Cb_quant[i - 8, (j - 8)]
-                Cr_quant[i, j] = Cr_dpcm[i, j] + Cr_quant[i - 8, (j - 8)]
-                
+    		Y_quant[i, j] = Y_dpcm[i, j] + Y_quant[i, j - 8];
+    		if(i < height_c and j < width_c):
+    			Cb_quant[i, j] = Cb_dpcm[i, j] + Cb_quant[i, j - 8]
+    			Cr_quant[i, j] = Cr_dpcm[i, j] + Cr_quant[i, j - 8]
+    	            
     return Y_quant, Cb_quant, Cr_quant
 ### \dpcm ###
