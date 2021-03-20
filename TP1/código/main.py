@@ -165,141 +165,182 @@ def ex5_23(bs=8):
     plt.show()
     
 def ex6():
-	img, R, G, B = open_image('../imagens/peppers.bmp')
-	colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
+    img, R, G, B = open_image('../imagens/peppers.bmp')
+    colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
 
-	ds = '4:2:0'
-	filt = False
-	bs = 8
+    ds = '4:2:0'
+    filt = False
+    bs = 8
 
-	Y, Cb, Cr = RGB2YCbCr(R, G, B)
-	Y, Cb_ds, Cr_ds = downsample(Y, Cb, Cr, ds)
+    Y, Cb, Cr = RGB2YCbCr(R, G, B)
+    Y, Cb_ds, Cr_ds = downsample(Y, Cb, Cr, ds)
 
-	Y_dct = dct_blocks(Y, bs)
-	Cb_dct = dct_blocks(Cb_ds, bs)
-	Cr_dct = dct_blocks(Cr_ds, bs)
+    Y_dct = dct_blocks(Y, bs)
+    Cb_dct = dct_blocks(Cb_ds, bs)
+    Cr_dct = dct_blocks(Cr_ds, bs)
 
-	view_dct(Y_dct)
-	#view_dct(Cb_dct)
-	#view_dct(Cr_dct)
+    view_dct(Y_dct)
+    #view_dct(Cb_dct)
+    #view_dct(Cr_dct)
 
-	#Quantizacao 
-	Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y = quantization(Y_dct, Cb_dct, Cr_dct, 50)
-	view_dct(Y_quant)
-	#view_dct(Cb_quant)
-	#view_dct(Cr_quant)
+    #Quantizacao 
+    Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y = quantization(Y_dct, Cb_dct, Cr_dct, 50)
+    view_dct(Y_quant)
+    #view_dct(Cb_quant)
+    #view_dct(Cr_quant)
 
-	#Quantizacao inversa 
-	Y_iquant, Cb_iquant, Cr_iquant = iquantization(Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y)
-	view_dct(Y_iquant)
-	#view_dct(Cb_iquant)
-	#view_dct(Cr_iquant)
-	
-	height, width = R.shape
+    #Quantizacao inversa 
+    Y_iquant, Cb_iquant, Cr_iquant = iquantization(Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y)
+    view_dct(Y_iquant)
+    #view_dct(Cb_iquant)
+    #view_dct(Cr_iquant)
+    
+    height, width = R.shape
 
-	Y_r = idct_blocks(Y_iquant, height, width, bs)
-	Cb_ds_r = idct_blocks(Cb_iquant, int(height/2), int(width/2), bs)
-	Cr_ds_r = idct_blocks(Cr_iquant, int(height/2), int(width/2), bs)
-	
-	view(colors_grayscale, 'grayscale', Y_r)
-	
-	Y_r, Cb_r, Cr_r = upsample(Y_r, Cb_ds_r, Cr_ds_r, ds)
-	
-	R_r, G_r, B_r = YCbCr2RGB(Y_r, Cb_r, Cr_r)
-	
-	img_r = img.copy();
-	img_r[:,:,0] = R_r
-	img_r[:,:,1] = G_r
-	img_r[:,:,2] = B_r
-	
-	#plt.imshow(img_r)
+    Y_r = idct_blocks(Y_iquant, height, width, bs)
+    Cb_ds_r = idct_blocks(Cb_iquant, int(height/2), int(width/2), bs)
+    Cr_ds_r = idct_blocks(Cr_iquant, int(height/2), int(width/2), bs)
+    
+    view(colors_grayscale, 'grayscale', Y_r)
+    
+    Y_r, Cb_r, Cr_r = upsample(Y_r, Cb_ds_r, Cr_ds_r, ds)
+    
+    R_r, G_r, B_r = YCbCr2RGB(Y_r, Cb_r, Cr_r)
+    
+    img_r = img.copy();
+    img_r[:,:,0] = R_r
+    img_r[:,:,1] = G_r
+    img_r[:,:,2] = B_r
+    
+    #plt.imshow(img_r)
 
-	print("Y:", Y_dct[200:208, 200:208])
-	print("Y_r", Y_iquant[200:208, 200:208])
+    print("Y:", Y_dct[200:208, 200:208])
+    print("Y_r", Y_iquant[200:208, 200:208])
 
-	plt.show()
-	
+    plt.show()
+    
 def ex7():
-	img, R, G, B = open_image('../imagens/peppers.bmp')
-	colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
-	
-	height, width = R.shape
+    img, R, G, B = open_image('../imagens/peppers.bmp')
+    colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
+    
+    height, width = R.shape
 
-	ds = '4:2:0'
-	filt = False
-	bs = 8
+    ds = '4:2:0'
+    filt = False
+    bs = 8
 
-	Y, Cb, Cr = RGB2YCbCr(R, G, B)
-	Y, Cb_ds, Cr_ds = downsample(Y, Cb, Cr, ds)
+    Y, Cb, Cr = RGB2YCbCr(R, G, B)
+    Y, Cb_ds, Cr_ds = downsample(Y, Cb, Cr, ds)
 
-	Y_dct = dct_blocks(Y, bs)
-	Cb_dct = dct_blocks(Cb_ds, bs)
-	Cr_dct = dct_blocks(Cr_ds, bs)
-	
-	Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y = quantization(Y_dct, Cb_dct, Cr_dct, 100)
-	
-	Y_dpcm, Cb_dpcm, Cr_dpcm = dpcm(Y_quant, Cb_quant, Cr_quant)
-	
-	Y_quant_r, Cb_quant_r, Cr_quant_r = idpcm(Y_dpcm, Cb_dpcm, Cr_dpcm)
-	
-	Y_dct_r, Cb_dct_r, Cr_dct_r = iquantization(Y_quant_r, Cb_quant_r, Cr_quant_r, q_cbcr, q_y)
+    Y_dct = dct_blocks(Y, bs)
+    Cb_dct = dct_blocks(Cb_ds, bs)
+    Cr_dct = dct_blocks(Cr_ds, bs)
+    
+    Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y = quantization(Y_dct, Cb_dct, Cr_dct, 100)
+    
+    Y_dpcm, Cb_dpcm, Cr_dpcm = dpcm(Y_quant, Cb_quant, Cr_quant)
+    
+    Y_quant_r, Cb_quant_r, Cr_quant_r = idpcm(Y_dpcm, Cb_dpcm, Cr_dpcm)
+    
+    Y_dct_r, Cb_dct_r, Cr_dct_r = iquantization(Y_quant_r, Cb_quant_r, Cr_quant_r, q_cbcr, q_y)
 
-	view_dct(Y_quant[8:24, 8:24])
-	view_dct(Y_dpcm[8:24, 8:24])
-	print("Y_dct", Y_quant[8:16, 8:16])
-	print("Y_dpcm", Y_dpcm[8:16, 8:16])
-	
-	Y_r = idct_blocks(Y_dct_r, height, width)
-	Cb_ds_r = idct_blocks(Cb_dct_r, height, width)
-	Cr_ds_r = idct_blocks(Cr_dct_r, height, width)
-	
-	Y_r, Cb_r, Cr_r = upsample(Y_r, Cb_ds_r, Cr_ds_r, ds)
-	
-	R_r, G_r, B_r = YCbCr2RGB(Y_r, Cb_r, Cr_r)
-	
-	img_r = img.copy()
-	img_r[:,:,0] = R_r
-	img_r[:,:,1] = G_r
-	img_r[:,:,2] = B_r
-	
-	plt.figure()
-	plt.imshow(img_r)
-	
-	plt.show()
+    view_dct(Y_quant[8:24, 8:24])
+    view_dct(Y_dpcm[8:24, 8:24])
+    print("Y_dct", Y_quant[8:16, 8:16])
+    print("Y_dpcm", Y_dpcm[8:16, 8:16])
+    
+    Y_r = idct_blocks(Y_dct_r, height, width)
+    Cb_ds_r = idct_blocks(Cb_dct_r, height, width)
+    Cr_ds_r = idct_blocks(Cr_dct_r, height, width)
+    
+    Y_r, Cb_r, Cr_r = upsample(Y_r, Cb_ds_r, Cr_ds_r, ds)
+    
+    R_r, G_r, B_r = YCbCr2RGB(Y_r, Cb_r, Cr_r)
+    
+    img_r = img.copy()
+    img_r[:,:,0] = R_r
+    img_r[:,:,1] = G_r
+    img_r[:,:,2] = B_r
+    
+    plt.figure()
+    plt.imshow(img_r)
+    
+    plt.show()
+    
 
+def ex8(img,img_r):
+    '''
+   TO-DO:
+       1-Valores estao muito estranhos devido a imagem reconstruida não estar correta será ?
+       2-Nao percebo onde deve estar o erro sendo que a formula da MSE tirei da ne \
+           e em todos os posts é sempre a mesma
+       3- subtrair a imagem reconstruida da imagem original e plot(dpcm não está direito mas farei à mesma)
+    '''
+    
+    
+
+    res = 0
+    m,n,channel = img.shape
+    snr= 0
+    for i in range(m-1):
+        for j in range(n-1):
+            mse = (np.square(img[i,j] - img_r[i,j])).mean(axis=None)
+            p = np.square(img[i,j]).mean(axis=None)
+   
+    
+    new_img = img - img_r
+    
+    rmse = math.sqrt(mse)
+    
+
+    snr = 10 * np.log10(p/mse)
+    psnr_a = np.amax(np.square(img))
+    psnr = 10 * np.log10(psnr_a/mse)
+    
+    plt.figure()
+    plt.imshow(new_img)
+    
+
+    print('MSE: {0}\nRMSE: {1}\nSNR: {2}\nPSNR:{3}'.format(mse,rmse,snr,psnr))
+  
+    
+   
+    
+    
+    pass
 if __name__ == "__main__":
-	#ex2()
-	#ex3()
-	#ex4()
-	#ex5_1()
-	#ex5_23(8)
-	#ex5_23(64)
-	#ex6()
-	#ex7()
+    #ex2()
+    #ex3()
+    #ex4()
+    #ex5_1()
+    #ex5_23(8)
+    #ex5_23(64)
+    #ex6()
+    #ex7()
+    #ex8()
+    ds = '4:2:0'
+    q_factor = 75
+    f = False
+    bs = 8
 
-	ds = '4:2:0'
-	q_factor = 100
-	f = False
-	bs = 8
+    img = plt.imread('../imagens/peppers.bmp')
 
-	img = plt.imread('../imagens/logo.bmp')
+    height,width = img[:,:,0].shape
+    # encoder(image, q_factor=75, dsType='4:2:2', filt=False, BlockSize=8)        
+    Y_dpcm, Cb_dpcm, Cr_dpcm, q_cbcr, q_y = encoder(img, q_factor, ds, f, bs)
+   
+    # decoder(Y_dpcm, Cb_dpcm, Cr_dpcm, q_cbcr, q_y, original_height, original_width, q_factor=75, dsType='4:2:2', filt=True, BlockSize=8)
+    R_r, G_r, B_r = decoder(Y_dpcm, Cb_dpcm, Cr_dpcm, q_cbcr, q_y, height, width, q_factor, ds, f, bs)
 
-	height,width = img[:,:,0].shape
-	# encoder(image, q_factor=75, dsType='4:2:2', filt=False, BlockSize=8)        
-	Y_dpcm, Cb_dpcm, Cr_dpcm, q_cbcr, q_y = encoder(img, q_factor, ds, f, bs)
-
-	# decoder(Y_dpcm, Cb_dpcm, Cr_dpcm, q_cbcr, q_y, original_height, original_width, q_factor=75, dsType='4:2:2', filt=True, BlockSize=8)
-	R_r, G_r, B_r = decoder(Y_dpcm, Cb_dpcm, Cr_dpcm, q_cbcr, q_y, height, width, q_factor, ds, f, bs)
-
-	img_r = img.copy()
-	img_r[:,:,0] = R_r
-	img_r[:,:,1] = G_r
-	img_r[:,:,2] = B_r
-
-	plt.figure()
-	plt.imshow(img)
-	plt.figure()
-	plt.imshow(img_r)
-
-	plt.show()
+    img_r = img.copy()
+    img_r[:,:,0] = R_r
+    img_r[:,:,1] = G_r
+    img_r[:,:,2] = B_r
+   
+    plt.figure()
+    plt.imshow(img)
+    plt.figure()
+    plt.imshow(img_r)
+    ex8(img,img_r)
+    plt.show()
 

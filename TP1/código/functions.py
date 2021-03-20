@@ -4,6 +4,7 @@ import numpy as np
 from scipy.fftpack import dct, idct
 import itertools
 import math
+from sys import stdin,stdout
 
 def encoder(image, q_factor=75, dsType='4:2:2', filt=False, BlockSize=8):
     R = image[:, :, 0]
@@ -224,6 +225,10 @@ def quantization(Y_dct, Cb_dct, Cr_dct,fact_q):
                Cr_quant[i:i+8, j:j+8] = np.round(Cr_dct[i:i+8,j:j+8] / q_cbcr)
     
     return Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y
+
+def outln(n):
+	stdout.write(str(n))
+	stdout.write("\n")
 
 def iquantization(Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y):
     height_Y, width_Y = Y_quant.shape
