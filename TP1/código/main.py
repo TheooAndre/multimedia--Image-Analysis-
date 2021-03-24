@@ -233,8 +233,8 @@ def ex7():
 
     view_dct(Y_quant[8:24, 8:24])
     view_dct(Y_dpcm[8:24, 8:24])
-    print("Y_quant\n", Y_quant[8:16, 8:16])
-    print("Y_dpcm\n", Y_dpcm[8:16, 8:16])
+    print("Y_quant\n", Y_quant[0:16, 0:16])
+    print("Y_dpcm\n", Y_dpcm[0:16, 0:16])
     print(Y_quant[0:16, 0:16]==Y_dpcm[0:16, 0:16])
     
     Y_r = idct_blocks(Y_dct_r, height, width)
@@ -256,7 +256,10 @@ def ex7():
     plt.show()
     
 
-def ex8(img,img_r):
+def ex8(img, img_r):
+    img, R, G, B = open_image('../imagens/peppers.bmp')
+    colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
+    
     '''
    TO-DO:
        1-Valores estao muito estranhos devido a imagem reconstruida não estar correta será ?
@@ -265,28 +268,41 @@ def ex8(img,img_r):
        3- subtrair a imagem reconstruida da imagem original e plot(dpcm não está direito mas farei à mesma)
     '''
     
+    #imagem original
+    R = img[:,:,0] 
+    G = img[:,:,1]
+    B = img[:,:,2]
+    [Y, Cb, Cr] = RGB2YCbCr(R,G,B)
     
+    
+    #Imagem Reconstruida
+    R_r = img_r[:,:,0] 
+    G_r = img_r[:,:,1] 
+    B_r = img_r[:,:,2] 
 
-    res = 0
+    [Y_rec,  Cb_rec, Cr_rec] = RGB2YCbCr(R,G,B)
+    
+    view(colors_grayscale,"Gray",Y)
+    view(colors_grayscale,"Gray",Y_rec)
+    
     m,n,channel = img.shape
-    snr= 0
-    for i in range(m-1):
-        for j in range(n-1):
-            mse = (np.square(img[i,j] - img_r[i,j])).mean(axis=None)
-            p = np.square(img[i,j]).mean(axis=None)
-   
     
-    new_img = img - img_r
+    p = np.sum(np.square(img))/(m*n)
+    mse = np.sum(np.square(img-img_r)) / (m*n)
     
+    Y_erros = Y - Y_rec
+    
+    
+    print(Y_erros)
     rmse = math.sqrt(mse)
-    
 
     snr = 10 * np.log10(p/mse)
     psnr_a = np.amax(np.square(img))
     psnr = 10 * np.log10(psnr_a/mse)
     
-    plt.figure()
-    plt.imshow(new_img)
+    #view(colors_grayscale,"Gray",Y_erros)
+    plt.show()
+    #
     
 
     print('MSE: {0}\nRMSE: {1}\nSNR: {2}\nPSNR:{3}'.format(mse,rmse,snr,psnr))
