@@ -153,6 +153,10 @@ def error(original, rec, rec_name):
 	print("Métricas de erro ", rec_name, ":")
 	print('\tMSE: {0}\n\tRMSE: {1}\n\tSNR: {2}\n\tPSNR:{3}'.format(mse,rmse,snr,psnr))
 	
+	Y_original, _, _ = RGB2YCbCr(original[:,:,0], original[:,:,1], original[:,:,2])
+	Y_rec, _, _ = RGB2YCbCr(rec[:,:,0], rec[:,:,1], rec[:,:,2])
+	view2(colors_grayscale, 'gray', np.abs(Y_original - Y_rec), 'Y_error ' + rec_name)
+	
 def ex8():
 	for i in images:
 		img = plt.imread('../imagens/' + i)
