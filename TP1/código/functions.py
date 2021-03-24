@@ -72,7 +72,6 @@ def view2(colors, name, image, title):
     colormap = clr.LinearSegmentedColormap.from_list(name, colors, N=256)
     plt.figure()
     plt.title(title)
-    #plt.axis('off')
     plt.imshow(image, cmap = colormap)
     
 def view_dct2(image, title):
@@ -83,6 +82,18 @@ def view_dct2(image, title):
     plt.imshow(np.log(abs(image) + 0.0001), cmap = colormap)
     
 ### conversão de espaços de cor ###
+def RGB2YCbCr(R, G, B):
+    height, width = R.shape
+    Y = np.empty((height, width), dtype = np.uint8)
+    Cb = np.empty((height, width), dtype = np.uint8)
+    Cr = np.empty((height, width), dtype = np.uint8)
+
+    Y = 0.299*R + 0.587*G + 0.114*B
+    Cb = (B - Y)/1.772 + 128
+    Cr = (R - Y)/1.402 + 128
+
+    return Y, Cb, Cr
+    
 def YCbCr2RGB(Y, Cb, Cr):
     height, width = Y.shape
     R = np.empty((height, width), dtype = np.uint8)
@@ -107,18 +118,6 @@ def YCbCr2RGB(Y, Cb, Cr):
     B= np.round(B).astype(np.uint8)
 
     return R, G, B
-
-def RGB2YCbCr(R, G, B):
-    height, width = R.shape
-    Y = np.empty((height, width), dtype = np.uint8)
-    Cb = np.empty((height, width), dtype = np.uint8)
-    Cr = np.empty((height, width), dtype = np.uint8)
-
-    Y = 0.299*R + 0.587*G + 0.114*B
-    Cb = (B - Y)/1.772 + 128
-    Cr = (R - Y)/1.402 + 128
-
-    return Y, Cb, Cr
 ### \conversão de espaços de cor ###
     
 ### downsampling ###
@@ -252,10 +251,6 @@ def quantization(Y_dct, Cb_dct, Cr_dct,fact_q):
     
     return Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y
 
-def outln(n):
-	stdout.write(str(n))
-	stdout.write("\n")
-
 def iquantization(Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y):
     height_Y, width_Y = Y_quant.shape
     height_C, width_C = Cb_quant.shape
@@ -273,6 +268,11 @@ def iquantization(Y_quant, Cb_quant, Cr_quant, q_cbcr, q_y):
    
     return Y_iq, Cb_iq, Cr_iq
 ### \quantização ###
+
+def outln(n):
+	stdout.write(str(n))
+	stdout.write("\n")
+
 
 ### dpcm ###
 def dpcm(Y_quant, Cb_quant, Cr_quant):

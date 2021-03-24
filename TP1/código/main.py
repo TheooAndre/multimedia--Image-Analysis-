@@ -257,61 +257,54 @@ def ex7():
     
 
 def ex8(img, img_r):
-    img, R, G, B = open_image('../imagens/peppers.bmp')
-    colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
-    
-    '''
-   TO-DO:
-       1-Valores estao muito estranhos devido a imagem reconstruida não estar correta será ?
-       2-Nao percebo onde deve estar o erro sendo que a formula da MSE tirei da ne \
-           e em todos os posts é sempre a mesma
-       3- subtrair a imagem reconstruida da imagem original e plot(dpcm não está direito mas farei à mesma)
-    '''
-    
-    #imagem original
-    R = img[:,:,0] 
-    G = img[:,:,1]
-    B = img[:,:,2]
-    [Y, Cb, Cr] = RGB2YCbCr(R,G,B)
-    
-    
-    #Imagem Reconstruida
-    R_r = img_r[:,:,0] 
-    G_r = img_r[:,:,1] 
-    B_r = img_r[:,:,2] 
+	img, R, G, B = open_image('../imagens/peppers.bmp')
+	colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
 
-    [Y_rec,  Cb_rec, Cr_rec] = RGB2YCbCr(R,G,B)
-    
-    view(colors_grayscale,"Gray",Y)
-    view(colors_grayscale,"Gray",Y_rec)
-    
-    m,n,channel = img.shape
-    
-    p = np.sum(np.square(img))/(m*n)
-    mse = np.sum(np.square(img-img_r)) / (m*n)
-    
-    Y_erros = Y - Y_rec
-    
-    
-    print(Y_erros)
-    rmse = math.sqrt(mse)
+	'''
+	TO-DO:
+	   1-Valores estao muito estranhos devido a imagem reconstruida não estar correta será ?
+	   2-Nao percebo onde deve estar o erro sendo que a formula da MSE tirei da ne \
+		   e em todos os posts é sempre a mesma
+	   3- subtrair a imagem reconstruida da imagem original e plot(dpcm não está direito mas farei à mesma)
+	'''
 
-    snr = 10 * np.log10(p/mse)
-    psnr_a = np.amax(np.square(img))
-    psnr = 10 * np.log10(psnr_a/mse)
-    
-    #view(colors_grayscale,"Gray",Y_erros)
-    plt.show()
-    #
-    
+	#imagem original
+	R = img[:,:,0] 
+	G = img[:,:,1]
+	B = img[:,:,2]
+	[Y, Cb, Cr] = RGB2YCbCr(R,G,B)
 
-    print('MSE: {0}\nRMSE: {1}\nSNR: {2}\nPSNR:{3}'.format(mse,rmse,snr,psnr))
-  
-    
-   
-    
-    
-    pass
+
+	#Imagem Reconstruida
+	R_r = img_r[:,:,0] 
+	G_r = img_r[:,:,1] 
+	B_r = img_r[:,:,2] 
+
+	[Y_rec,  Cb_rec, Cr_rec] = RGB2YCbCr(R_r,G_r,B_r)
+
+	view(colors_grayscale,"Gray",Y)
+	view(colors_grayscale,"Gray",Y_rec)
+
+
+
+	Y_erros = Y - Y_rec
+	print("Max", np.max(Y_erros))
+
+	print(Y_erros)
+	view(colors_grayscale,"Gray", np.abs(Y_erros))
+	#plt.show()
+
+	m,n,channel = img.shape
+	p = np.sum(np.square(img))/(m*n)
+	mse = np.sum(np.square(img-img_r)) / (m*n)
+	rmse = math.sqrt(mse)
+	snr = 10 * np.log10(p/mse)
+	psnr_a = np.square(np.max(img).astype(np.float))
+	print(psnr_a)
+	psnr = 10 * np.log10(psnr_a/mse)
+
+	print('MSE: {0}\nRMSE: {1}\nSNR: {2}\nPSNR:{3}'.format(mse,rmse,snr,psnr))
+	
 if __name__ == "__main__":
     #ex2()
     #ex3()

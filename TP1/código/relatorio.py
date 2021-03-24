@@ -110,12 +110,12 @@ def ex6():
 		Y_quant75, _, _, _, _ = quantization(Y_dct, Cb_dct, Cr_dct, 75)
 		Y_quant100, _, _, _, _ = quantization(Y_dct, Cb_dct, Cr_dct, 100)
 		
-		view_dct2(Y_dct[0:16,0:16], 'Y_dct ' + i)
-		view_dct2(Y_quant10[0:16,0:16], 'Y_quant 10 ' + i)
-		view_dct2(Y_quant25[0:16,0:16], 'Y_quant 25 ' + i)
-		view_dct2(Y_quant50[0:16,0:16], 'Y_quant 50 ' + i)
-		view_dct2(Y_quant75[0:16,0:16], 'Y_quant 75 ' + i)
-		view_dct2(Y_quant100[0:16,0:16], 'Y_quant 100 ' + i)
+		view_dct2(Y_dct[144:160,144:160], 'Y_dct ' + i)
+		view_dct2(Y_quant10[144:160,144:160], 'Y_quant 10 ' + i)
+		view_dct2(Y_quant25[144:160,144:160], 'Y_quant 25 ' + i)
+		view_dct2(Y_quant50[144:160,144:160], 'Y_quant 50 ' + i)
+		view_dct2(Y_quant75[144:160,144:160], 'Y_quant 75 ' + i)
+		view_dct2(Y_quant100[144:160,144:160], 'Y_quant 100 ' + i)
 		plt.show()
 ### \ex6 ###
 
@@ -134,12 +134,25 @@ def ex7():
 		Y_quant100, Cb_quant100, Cr_quant100, _, _ = quantization(Y_dct, Cb_dct, Cr_dct, 100)
 		
 		Y_dpcm, Cb_dpcm, Cr_dpcm = dpcm(Y_quant100, Cb_quant100, Cr_quant100)
-		view_dct2(Y_quant100[0:16,0:16], 'Y_quant 100 ' + i)
-		view_dct2(Y_dpcm[0:16,0:16], 'Y_dpcm ' + i)
+		view_dct2(Y_quant100[144:160,144:160], 'Y_quant 100 ' + i)
+		view_dct2(Y_dpcm[144:160,144:160], 'Y_dpcm ' + i)
 		plt.show()
 ### \ex7 ###
 
 ### ex8 ###
+def error(original, rec, rec_name):
+	m, n, _ = original.shape
+	
+	p = np.sum(np.square(original)) / (m*n)
+	mse = np.sum(np.square(original - rec)) / (m*n)
+	rmse = math.sqrt(mse)
+	snr = 10 * np.log10(p/mse)
+	psnr_a = np.square(np.max(original).astype(np.float))
+	psnr = 10 * np.log10(psnr_a/mse)
+	
+	print("Métricas de erro ", rec_name, ":")
+	print('\tMSE: {0}\n\tRMSE: {1}\n\tSNR: {2}\n\tPSNR:{3}'.format(mse,rmse,snr,psnr))
+	
 def ex8():
 	for i in images:
 		img = plt.imread('../imagens/' + i)
@@ -176,30 +189,36 @@ def ex8():
 		img_r100[:,:,0] = R100;
 		img_r100[:,:,1] = G100;
 		img_r100[:,:,2] = B100;
-		
+	
 		plt.figure()
 		plt.title('Imagem original')
 		plt.imshow(img)
 		plt.figure()
 		plt.title('Imagem reconstruida 10')
 		plt.imshow(img_r10)
+		error(img, img_r10, 'img_r10 ' + i)
 		plt.figure()
 		plt.title('Imagem reconstruida 25')
 		plt.imshow(img_r25)
+		error(img, img_r25, 'img_r25 ' + i)
 		plt.figure()
 		plt.title('Imagem reconstruida 50')
 		plt.imshow(img_r50)
+		error(img, img_r50, 'img_r50 ' + i)
 		plt.figure()
 		plt.title('Imagem reconstruida 75')
 		plt.imshow(img_r75)
+		error(img, img_r75, 'img_r75 ' + i)
 		plt.figure()
 		plt.title('Imagem reconstruida 100')
 		plt.imshow(img_r100)
-		plt.show()
+		error(img, img_r100, 'img_r100 ' + i)
+		plt.show()    
+
 ### \ex8 ###
 	
 if __name__ == "__main__":
-	ex2()
+	'''ex2()
 	print("Press any key to continue")
 	input()
 	ex3()
@@ -222,7 +241,7 @@ if __name__ == "__main__":
 	input()
 	ex7()
 	print("Press any key to continue")
-	input()
+	input()'''
 	ex8()
 	print("Press any key to exit")
 	input()
