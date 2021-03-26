@@ -260,13 +260,6 @@ def ex8(img, img_r):
 	img, R, G, B = open_image('../imagens/peppers.bmp')
 	colors_grayscale = [(0,0,0), (0.5,0.5,0.5)]
 
-	'''
-	TO-DO:
-	   1-Valores estao muito estranhos devido a imagem reconstruida não estar correta será ?
-	   2-Nao percebo onde deve estar o erro sendo que a formula da MSE tirei da ne \
-		   e em todos os posts é sempre a mesma
-	   3- subtrair a imagem reconstruida da imagem original e plot(dpcm não está direito mas farei à mesma)
-	'''
 
 	#imagem original
 	R = img[:,:,0] 
